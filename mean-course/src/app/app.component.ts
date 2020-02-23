@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -7,11 +7,11 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent implements OnInit {
-  title = 'mean-course';
+export class AppComponent {
+  storedPosts = [];
 
-  ngOnInit(): void {
-    console.log(environment.url);
+  onPostAdded(post) {
+    this.storedPosts.push(post);
   }
 
 }

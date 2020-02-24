@@ -2,6 +2,22 @@ const http = require('http');
 const debug = require("debug")("node-angular");
 
 const app = require('./backend/app');
+var db = require('./db');
+
+db.connect(db.MODE_PRODUCTION, function(err){
+    if(err){
+        console.log("Unable to connect to Mariadb");
+        process.exit(1);
+    }
+    else{
+        console.log("Mariadb Connected Successfully");
+        db.getUsers((results) => {
+            console.log(results[0]);
+        }, (err) => {
+            console.log(err);
+        });
+    }
+});
 
 const normalizePort = val => {
     var port = parseInt(val, 10);

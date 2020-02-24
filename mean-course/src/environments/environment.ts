@@ -4,15 +4,20 @@
 
 const protocol = 'http://';
 const hostname = '192.168.4.223';
-const portNumber = '';
+const portNumber = '3000';
 const url = protocol + hostname + ':' + portNumber;
+
+function getApiUrl(apiEndpoint: string) {
+  return url + '/api/' + apiEndpoint;
+}
 
 export const environment = {
   production: false,
   hostname,
   protocol,
   portNumber,
-  url
+  url,
+  getApiUrl
 };
 
 /*

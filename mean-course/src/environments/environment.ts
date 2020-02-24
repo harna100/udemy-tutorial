@@ -4,8 +4,8 @@
 
 const protocol = 'http://';
 const hostname = '192.168.4.223';
-const portNumber = '3000';
-const url = protocol + hostname + ':' + portNumber;
+const portNumber = ''; // portnumber needs to be :numb if used
+const url = protocol + hostname + portNumber;
 
 function getApiUrl(apiEndpoint: string) {
   return url + '/api/' + apiEndpoint;

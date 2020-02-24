@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const db = require('../db');
 
 const app = express();
 
@@ -22,11 +23,21 @@ app.use((req, res, next) => {
 app.post('/api/posts', (req, res, next) => {
     const post = req.body;
     console.log(req.body);
+    db.addPost(req.body, function(results) {
+        console.log(results);
+        res.status(201).json({
+            message: "Success Posted",
+            post: post,
+            mdb:results
+        });
+    }, function(err) {
+        res.status(500).json({
+            message: "Failed",
+            err:err
+        });
+    })
+    
 
-    res.status(201).json({
-        message: "Success Posted",
-        post: post
-    });
 });
 
 app.get('/api/posts', (req, res, next) => {

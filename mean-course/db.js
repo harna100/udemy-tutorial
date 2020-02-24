@@ -29,3 +29,16 @@ exports.getUsers = function (successCb, errCb) {
     var sql = "SELECT * FROM users;";
     this.get().query(sql).then(successCb).catch(errCb);
 }
+
+exports.addPost = function (postToInsert, successCb, errCb) {
+    var sql = "INSERT INTO posts(title, content) values(:title,:content);";
+
+    this.get()
+        .query(
+            {namedPlaceholders: true, sql:sql},
+            postToInsert
+        )
+        .then(successCb)
+        .catch(errCb);
+
+}

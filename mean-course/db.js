@@ -40,5 +40,26 @@ exports.addPost = function (postToInsert, successCb, errCb) {
         )
         .then(successCb)
         .catch(errCb);
+}
 
+exports.getAllPosts = function (successCb, errCb) {
+    var sql = "SELECT * FROM posts;";
+
+    this.get()
+        .query(
+            {sql: sql}
+        )
+        .then(successCb)
+        .catch(errCb);
+}
+
+exports.deletePost = function (idToDelete, successCb, errCb) {
+    var sql = "DELETE FROM posts WHERE post_id = ?;";
+    this.get()
+        .query(
+            sql,
+            [idToDelete]
+        )
+        .then(successCb)
+        .catch(errCb);
 }

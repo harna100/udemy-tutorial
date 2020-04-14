@@ -23,10 +23,11 @@ app.use((req, res, next) => {
 app.use('/api/discord', discord);
 
 app.post('/api/posts', (req, res, next) => {
-    const post = req.body;
-    console.log(req.body);
+    var post = req.body;
+    console.log("req body: " + JSON.stringify(req.body));
     db.addPost(req.body, function(results) {
-        console.log(results);
+        console.log("results: " + JSON.stringify(results));
+        post.id = results.insertId;
         res.status(201).json({
             message: "Success Posted",
             post: post,
@@ -37,25 +38,37 @@ app.post('/api/posts', (req, res, next) => {
             message: "Failed",
             err:err
         });
-    })
-    
-
+    });
 });
 
 app.get('/api/posts', (req, res, next) => {
-    const posts = [
-        {id: 'dfsiugnbsdfn',
-         title: 'Server Post',
-         content: 'Server content'
-        },
-        {id: 'dfgsoindfglk',
-        title: 'Server Post',
-        content: 'Server content'
-       },
-    ];
-    res.status(200).json({
-        message: 'Posts fetched successfully',
-        posts: posts
+    db.getAllPosts(function (results) {
+        results.forEach(post => {
+            post.id = post.post_id.toString();
+            delete post.post_id;
+        });
+
+        res.status(200).json({
+            message: 'Posts fetched successfully',
+            posts: results
+        });
+    });
+});
+
+app.delete('/api/posts', (req, res, next) => {
+    const idToDelete = req.body.id;
+    console.log(req.body);
+    db.deletePost(idToDelete, function(results) {
+        res.status(200).json({
+            message: "Successfully deleted",
+            results: results
+        });
+    }, function(err) {
+        console.error(err);
+        res.status(500).json({
+            message: "Failed",
+            err:err
+        });
     });
 });
 

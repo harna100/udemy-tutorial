@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const db = require('../db');
-
+const discord = require('./discord');
 const app = express();
 
 app.use(bodyParser.json());
@@ -19,6 +19,8 @@ app.use((req, res, next) => {
     );
     next();
 })
+
+app.use('/api/discord', discord);
 
 app.post('/api/posts', (req, res, next) => {
     const post = req.body;
@@ -55,6 +57,26 @@ app.get('/api/posts', (req, res, next) => {
         message: 'Posts fetched successfully',
         posts: posts
     });
+});
+
+
+
+
+
+/* Final middleware nothing goes after this */
+app.use((err, req, res, next) => {
+    switch (err.message) {
+      case 'NoCodeProvided':
+        return res.status(400).send({
+          status: 'ERROR',
+          error: err.message,
+        });
+      default:
+        return res.status(500).send({
+          status: 'ERROR',
+          error: err.message,
+        });
+    }
 });
 
 module.exports = app;

@@ -1,0 +1,46 @@
+.login{
+    width:50vw;
+    left:0;
+    background-color: white;
+    border-radius:20px;
+    position: relative;
+  
+  }
+  .loginContent{
+    display:flex;
+    flex-direction: column;
+    justify-content: space-around;
+  
+  }
+  .keyHeader{
+    margin:0;
+    font-size: 4vw;
+    font-family: 'unisono_quickpathregular';
+  }
+  #discordParent{
+    flex-grow: 1;
+  }
+  .discordBtn {
+    background-color: #7289DA;
+    color:white;
+    list-style-type: none;
+    text-decoration: none;
+    border-radius: 5px;
+    width:100%;
+    height:20%;
+    text-align: center;
+    font-family: 'Varela Round', sans-serif;
+    font-size: 1vw;
+    cursor:pointer;
+  }
+  
+  #noAccount{
+    flex-grow: 1;
+    font-family: 'Varela Round', sans-serif;
+  
+  }
+  #noAccount a {
+    text-decoration: none;
+  }
+  
+  

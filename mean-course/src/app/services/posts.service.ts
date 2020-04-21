@@ -11,6 +11,16 @@ export class PostsService {
 
     constructor(private http: HttpClient) {}
 
+    getAuthHeader(): {headers: HttpHeaders, [key: string]: any} {
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            Authorization: localStorage.getItem('jwt')
+        });
+
+        const options = { headers };
+        return options;
+    }
+
     getPosts() {
         this.http.get<{message: string, posts: Post[]}>(environment.getApiUrl('posts'))
         .subscribe((postData) => {
@@ -26,8 +36,9 @@ export class PostsService {
     }
 
     addPost(title: string, content: string) {
-        const post: Post = {id: null, title, content};
-        this.http.post<{message: string, post: Post}>(environment.getApiUrl('posts'), post)
+        const post: Post = {id: null, title, content, userId: null};
+        const options = this.getAuthHeader();
+        this.http.post<{message: string, post: Post}>(environment.getApiUrl('posts/action/create'), post, options)
         .subscribe(responseData => {
             console.log(responseData.message);
             post.id = responseData.post.id;
@@ -38,21 +49,17 @@ export class PostsService {
     }
 
     deletePost(postId: string) {
-        console.log("Post ID: " + postId);
-        const options = {
-            headers: new HttpHeaders({
-              'Content-Type': 'application/json',
-            }),
-            body: {
-              id: postId
-            },
+        console.log('Post ID: ' + postId);
+        const options = this.getAuthHeader();
+        options.body = {
+            id: postId
         };
 
-        this.http.delete(environment.getApiUrl('posts'), options)
+        this.http.delete(environment.getApiUrl('posts/action/delete'), options)
         .subscribe(responseData => {
             console.log(responseData);
-            const idxToRemove:number = this.posts.findIndex((post) => post.id === postId);
-            console.log("Removing: " + idxToRemove);
+            const idxToRemove: number = this.posts.findIndex((post) => post.id === postId);
+            console.log('Removing: ' + idxToRemove);
             this.posts.splice(idxToRemove, 1);
             this.postsUpdated.next([...this.posts]);
         });

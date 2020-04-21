@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const db = require('../db');
 const discord = require('./discord');
 const app = express();
+const posts = require('./posts');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -22,56 +23,57 @@ app.use((req, res, next) => {
 
 app.use('/api/discord', discord);
 
-app.post('/api/posts', (req, res, next) => {
-    var post = req.body;
-    console.log("req body: " + JSON.stringify(req.body));
-    db.addPost(req.body, function(results) {
-        console.log("results: " + JSON.stringify(results));
-        post.id = results.insertId;
-        res.status(201).json({
-            message: "Success Posted",
-            post: post,
-            mdb:results
-        });
-    }, function(err) {
-        res.status(500).json({
-            message: "Failed",
-            err:err
-        });
-    });
-});
+app.use('/api/posts', posts)
 
-app.get('/api/posts', (req, res, next) => {
-    db.getAllPosts(function (results) {
-        results.forEach(post => {
-            post.id = post.post_id.toString();
-            delete post.post_id;
-        });
+// app.post('/api/posts', (req, res, next) => {
+//     var post = req.body;
+//     console.log("req body: " + JSON.stringify(req.body));
+//     db.addPost(req.body, function(results) {
+//         console.log("results: " + JSON.stringify(results));
+//         post.id = results.insertId;
+//         res.status(201).json({
+//             message: "Success Posted",
+//             post: post,
+//             mdb:results
+//         });
+//     }, function(err) {
+//         res.status(500).json({
+//             message: "Failed",
+//             err:err
+//         });
+//     });
+// });
 
-        res.status(200).json({
-            message: 'Posts fetched successfully',
-            posts: results
-        });
-    });
-});
+// app.get('/api/posts', (req, res, next) => {
+//     db.getAllPosts(function (results) {
+//         results.forEach(post => {
+//             post.id = post.post_id.toString();
+//             delete post.post_id;
+//         });
 
-app.delete('/api/posts', (req, res, next) => {
-    const idToDelete = req.body.id;
-    console.log(req.body);
-    db.deletePost(idToDelete, function(results) {
-        res.status(200).json({
-            message: "Successfully deleted",
-            results: results
-        });
-    }, function(err) {
-        console.error(err);
-        res.status(500).json({
-            message: "Failed",
-            err:err
-        });
-    });
-});
+//         res.status(200).json({
+//             message: 'Posts fetched successfully',
+//             posts: results
+//         });
+//     });
+// });
 
+// app.delete('/api/posts', (req, res, next) => {
+//     const idToDelete = req.body.id;
+//     console.log(req.body);
+//     db.deletePost(idToDelete, function(results) {
+//         res.status(200).json({
+//             message: "Successfully deleted",
+//             results: results
+//         });
+//     }, function(err) {
+//         console.error(err);
+//         res.status(500).json({
+//             message: "Failed",
+//             err:err
+//         });
+//     });
+// });
 
 
 

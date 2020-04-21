@@ -4,7 +4,7 @@
             {{ post.title }}
         </mat-expansion-panel-header>
         <p>{{ post.content }}</p>
-        <mat-action-row>
+        <mat-action-row *ngIf="post.userId == this.userId">
             <button mat-button color='accent'>Edit</button>
             <button mat-button color='warn' (click)="deletePost(post.id)">Delete</button>
         </mat-action-row>

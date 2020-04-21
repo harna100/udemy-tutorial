@@ -13,13 +13,8 @@ import { HeaderComponent } from './header/header.component';
 import { PostListComponent } from './posts/post-list/post-list.component';
 import { LoginComponent } from './login/login.component';
 import { PostHomeComponent } from './posts/post-home/post-home.component';
+import { AppRoutingModule } from './app-routing.module';
 
-const appRoutes: Routes = [
-  { path: 'jwt/:jwt', component: LoginComponent},
-  { path: 'login', component: LoginComponent},
-  { path: 'posts', component: PostHomeComponent},
-  { path: '', component: AppComponent}
-];
 
 @NgModule({
   declarations: [
@@ -31,10 +26,7 @@ const appRoutes: Routes = [
     PostHomeComponent
   ],
   imports: [
-    RouterModule.forRoot(
-      appRoutes,
-      { enableTracing: true } // debugging purposes only
-    ),
+    AppRoutingModule,
     BrowserModule,
     FormsModule,
     BrowserAnimationsModule,

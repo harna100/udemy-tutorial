@@ -56,14 +56,14 @@ router.get('/callback', catchAsync(async (req, res, next) => {
     
     db.checkUser(id, username, access_token, refresh_token, function(results) {
         
-        const jwt_expires = 3600;
+        const jwt_expires = 60*60*24*7;
 
         const userJwt = jwt.sign({id: results[0].user_id}, jwt_secret, {
             algorithm: 'HS256',
             expiresIn: jwt_expires
         });
 
-        res.redirect(`/jwt/${userJwt}`);
+        res.redirect(`/jwt/#${userJwt}`);
         
         // res.status(200).json({
         //     "title": "success",
@@ -80,64 +80,6 @@ router.get('/callback', catchAsync(async (req, res, next) => {
 
     
 }));
-
-
-
-
-//callback after login page
-// router.get('/callback', catchAsync(async (req, res) => {
-//     if (!req.query.code) throw new Error('NoCodeProvided');
-//     const code = req.query.code;
-//     const creds = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
-//     const response = await fetch(`https://discordapp.com/api/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=${redirect}`,
-//         {
-//             method: 'POST',
-//             headers: {
-//                 Authorization: `Basic ${creds}`,
-//             },
-//         });
-//     const json = await response.json();
-//     const TOKEN = json.access_token;
-//     userTOKEN = TOKEN;
-//     const user = await fetch('http://discordapp.com/api/users/@me',
-//         {
-//             method: 'GET',
-//             headers: {
-//                 Authorization: `Bearer ${TOKEN}`,
-//             },
-//         });
-
-
-//     const userData = await user.json();
-//     const username = userData.username;
-//     const id = userData.id;
-
-//     const jwt_key = 'softwareengineeringismymajorandwegraduateinmay';
-//     const jwt_expires = 3600;
-
-//     const json_token = jwt.sign({ username: username, id: id, token: TOKEN }, jwt_key, {
-//         algorithm: 'HS256',
-//         expiresIn: jwt_expires
-//     });
-//     // console.log(json_token);
-//     const createUserData = {
-//         username: username,
-//         json_token: json_token,
-//         expiresIn: 3600
-//     }
-//     databaseRecords.createUser(id, username, TOKEN, function (results) {
-//         console.log("success")
-//         res.redirect('/?token=' + JSON.stringify(createUserData)); //jwt=hsdb kvjh,sbdfi
-//     }, function (err) {
-//         if (err) {
-//             return res.status(500).json(err);
-//         }
-//         else {
-//         }
-//     });
-
-// }));
-
 
 
 module.exports = router;

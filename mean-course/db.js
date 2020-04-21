@@ -40,7 +40,7 @@ exports.getUser = function (user_id, successCb, errCb) {
 }
 
 exports.addPost = function (postToInsert, successCb, errCb) {
-    var sql = "INSERT INTO posts(title, content) values(:title,:content);";
+    var sql = "INSERT INTO posts(title, content, user_post_id) values(:title,:content,:userId);";
 
     this.get()
         .query(
@@ -101,12 +101,12 @@ exports.getAllPosts = function (successCb, errCb) {
         .catch(errCb);
 }
 
-exports.deletePost = function (idToDelete, successCb, errCb) {
-    var sql = "DELETE FROM posts WHERE post_id = ?;";
+exports.deletePost = function (idToDelete, userId, successCb, errCb) {
+    var sql = "DELETE FROM posts WHERE post_id = ? AND user_post_id = ?;";
     this.get()
         .query(
             sql,
-            [idToDelete]
+            [idToDelete, userId]
         )
         .then(successCb)
         .catch(errCb);

@@ -10,11 +10,17 @@ var state = {
 };
 
 exports.connect = function (mode, done) {
+    // state.pool = mariadb.createPool({
+    //     socketPath: '/var/run/mysqld/mysqld.sock',
+    //     user: 'root',
+    //     password: '1234',
+    //     database: 'meancourse'
+    // });
+
     state.pool = mariadb.createPool({
-        socketPath: '/var/run/mysqld/mysqld.sock',
-        user: 'root',
+        user: 'capstone',
         password: '1234',
-        database: 'meancourse'
+        database: 'udemy_mean'
     });
 
     state.mode = mode;
@@ -56,8 +62,17 @@ exports.createUser = function(discordId, discordUsername, discordRefresh, discor
 
     this.get()
         .query(sql, [discordId, discordUsername, discordRefresh, discordAccess])
-        .then(successCb)
-        .catch(errCb)
+        .then(function (results) {
+            console.log("create user");
+            console.log(results);
+            results.user_id = results.insertId;
+            console.log(results);
+            successCb(results)
+        })
+        .catch(function(err) {
+            err.createuser = true;
+            errCb(err);
+        })
 };
 
 exports.loginUser = function(userId, discordId, discordUsername, discordRefresh, discordAccess, successCb, errCb) {
@@ -67,9 +82,18 @@ exports.loginUser = function(userId, discordId, discordUsername, discordRefresh,
     .query(sql, [discordId, discordUsername, discordRefresh, discordAccess, userId])
     .then(function(results) {
         console.log("Updated: " + JSON.stringify(results));
-        module.exports.getUser(userId, successCb, errCb);
+        module.exports.getUser(userId, function(results) {
+            console.log("login user");
+            console.log(results);
+            results = results[0];
+            console.log(results);
+            successCb(results);
+        }, errCb);
     })
-    .catch(errCb)
+    .catch(function(err) {
+        err.loginuser = true;
+        errCb(err);
+    })
 };
 
 exports.checkUser = function(discordId, discordUsername, discordRefresh, discordAccess, successCb, errCb) {
@@ -78,16 +102,21 @@ exports.checkUser = function(discordId, discordUsername, discordRefresh, discord
     this.get()
         .query(sql, [discordId])
         .then(function(results) {
-            // console.log(results[0]);
+            console.log("Checked users: " + results.length)
             if (results[0] === undefined) {
+                console.log("No user");
                 module.exports.createUser(discordId, discordUsername, discordRefresh, discordAccess, successCb, errCb);
             }
             else {
+                console.log("Found user");
                 console.log(results[0])
                 module.exports.loginUser(results[0].user_id, discordId, discordUsername, discordRefresh, discordAccess, successCb, errCb);
             }
         })
-        .catch(errCb)
+        .catch(function(err) {
+            err.checkUser = true;
+            errCb(err);
+        })
 };
 
 exports.getAllPosts = function (successCb, errCb) {

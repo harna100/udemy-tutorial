@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
             (jwtAnchor: string) => {
                 console.log(jwtAnchor);
                 if (jwtAnchor !== null) {
-                    localStorage.setItem('jwt', jwtAnchor);
+                    this.authService.setUserId(jwtAnchor);
                     this.router.navigateByUrl('posts');
                     return Observable;
                 } else {

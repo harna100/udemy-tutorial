@@ -13,7 +13,7 @@ const router = express.Router();
 
 const CLIENT_ID = '';
 const CLIENT_SECRET = '';
-const redirect = encodeURIComponent('http://192.168.4.223/api/discord/callback');
+const redirect = encodeURIComponent('https://keytrader.xyz/api/discord/callback');
 const jwt_secret = 'supersecretsecret';
 
 //login page
@@ -53,23 +53,17 @@ router.get('/callback', catchAsync(async (req, res, next) => {
     const username = userData.username;
     const id = userData.id;
 
-    
+
     db.checkUser(id, username, access_token, refresh_token, function(results) {
-        
+
         const jwt_expires = 60*60*24*7;
 
-        const userJwt = jwt.sign({id: results[0].user_id}, jwt_secret, {
+        const userJwt = jwt.sign({id: results.user_id}, jwt_secret, {
             algorithm: 'HS256',
             expiresIn: jwt_expires
         });
 
         res.redirect(`/jwt/#${userJwt}`);
-        
-        // res.status(200).json({
-        //     "title": "success",
-        //     "message": json,
-        //     "jwt": userJwt,
-        // });
 
     }, function(err) {
         res.status(500).json({
@@ -78,7 +72,7 @@ router.get('/callback', catchAsync(async (req, res, next) => {
     });
 
 
-    
+
 }));
 
 

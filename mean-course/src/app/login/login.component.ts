@@ -1,11 +1,8 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Post } from 'src/app/models/post.model';
-import { NgForm } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
-import { of, Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -13,26 +10,53 @@ import { environment } from 'src/environments/environment';
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
     loginUrl: string;
+    isLoggingIn: boolean;
+    didLoginErr: boolean;
+    private userIdSetSub: Subscription;
+    private loginDidErrorSub: Subscription;
 
     ngOnInit(): void {
+        this.isLoggingIn = false;
+        this.didLoginErr = false;
         this.loginUrl = environment.getApiUrl('discord/login');
 
-        console.log(this.route.snapshot.paramMap.get('jwt'));
-        this.route.fragment.subscribe(
-            (jwtAnchor: string) => {
-                console.log(jwtAnchor);
-                if (jwtAnchor !== null) {
-                    this.authService.setUserId(jwtAnchor);
-                    this.router.navigateByUrl('posts');
-                    return Observable;
+        this.userIdSetSub = this.authService.userIdSet.subscribe(
+            () => {
+                this.isLoggingIn = false;
+                this.router.navigateByUrl('posts');
+            }
+        );
+
+        this.loginDidErrorSub = this.authService.loginDidError.subscribe(
+            () => {
+                if (! this.authService.isLoggedIn()) {
+                    this.isLoggingIn = false;
+                    this.didLoginErr = true;
                 } else {
-                    return Observable;
+                    this.isLoggingIn = false;
+                    this.router.navigateByUrl('posts');
                 }
             }
         );
+
+        this.route.queryParams.subscribe(
+            (params) => {
+                console.log(params);
+                if (params['code']) {
+                    this.authService.login(params['code']);
+                    this.isLoggingIn = true;
+                    this.router.navigate([], {queryParams: {}, replaceUrl: true});
+                }
+            }
+        );
+    }
+
+    ngOnDestroy(): void {
+        this.userIdSetSub.unsubscribe();
+        this.loginDidErrorSub.unsubscribe();
     }
 
     login(): void {

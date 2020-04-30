@@ -13,7 +13,10 @@ const router = express.Router();
 
 const CLIENT_ID = '';
 const CLIENT_SECRET = '';
-const redirect = encodeURIComponent('https://keytrader.xyz/api/discord/callback');
+// const redirect = encodeURIComponent('https://keytrader.xyz/api/discord/callback');
+const redirect = encodeURIComponent('https://keytrader.xyz/login');
+// const redirect = encodeURIComponent('http://192.168.4.223/login');
+
 const jwt_secret = 'supersecretsecret';
 
 //login page
@@ -22,10 +25,9 @@ router.get('/login', (req, res) => {
     res.redirect(`https://discordapp.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&response_type=code&scope=identify%20guilds%20email`);
 });
 
-router.get('/callback', catchAsync(async (req, res, next) => {
-    if (!req.query.code) throw new Error('NoCodeProvided');
-    const code = req.query.code;
-    console.log(code);
+router.post('/callback', catchAsync(async (req, res, next) => {
+    if (!req.body.code) throw new Error('NoCodeProvided');
+    const code = req.body.code;
 
     const creds = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
     const response = await fetch(`https://discordapp.com/api/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=${redirect}`,
@@ -36,6 +38,9 @@ router.get('/callback', catchAsync(async (req, res, next) => {
       },
     });
     const json = await response.json();
+    if (json.error) {
+        return res.status(500).json(json);
+    }
     const access_token = json.access_token;
     const refresh_token = json.refresh_token;
 
@@ -63,7 +68,10 @@ router.get('/callback', catchAsync(async (req, res, next) => {
             expiresIn: jwt_expires
         });
 
-        res.redirect(`/jwt/#${userJwt}`);
+        res.status(200).json({
+            message: "Login success!",
+            jwt: userJwt
+        });
 
     }, function(err) {
         res.status(500).json({

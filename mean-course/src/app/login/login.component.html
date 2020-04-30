@@ -1,10 +1,20 @@
-<div class="login">
-    <div class="loginContent">
-      <h2 class="keyHeader" style="flex-grow:2">Key Trader</h2>
-      <div id="discordParent">
-        <button class="discordBtn" (click)="login()">Login with Discord</button>
-      </div>
-      <p id="noAccount">Don't have an account? <a href="https://discordapp.com/register" target="_blank">Sign up</a></p>
+<mat-card class="error" *ngIf="didLoginErr">
+  <mat-card-title>
+    Error logging in. Please Try again
+  </mat-card-title>
+</mat-card>
+
+<mat-card class="login">
+  <div class="loginContent" *ngIf="!isLoggingIn">
+    <h2 class="keyHeader" style="flex-grow:2">Key Trader</h2>
+    <div id="discordParent">
+      <button mat-raised-button class="discordBtn" (click)="login()">Login with Discord</button>
     </div>
+    <p id="noAccount">Don't have an account? <a href="https://discordapp.com/register" target="_blank">Sign up</a></p>
   </div>
-  
+</mat-card>
+
+<mat-card class="loading" *ngIf="isLoggingIn">
+  <img src="assets/loading.gif" alt="">
+  <p>Logging In</p>
+</mat-card>

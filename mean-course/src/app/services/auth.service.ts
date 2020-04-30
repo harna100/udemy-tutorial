@@ -1,16 +1,30 @@
 import { Injectable, EventEmitter, Output } from '@angular/core';
-import { Subject } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { Subject, Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
     @Output() userIdSet = new EventEmitter<void>();
+    @Output() loginDidError = new EventEmitter<void>();
 
 
     constructor(private http: HttpClient) {}
 
+    login(code: string) {
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json'
+        });
 
+        const options = { headers };
+
+        this.http.post<{message: string, jwt: string}>(environment.getApiUrl('discord/callback'), {code}, options)
+        .subscribe(responseData => {
+            this.setUserId(responseData.jwt);
+        }, (error) => {
+            this.loginDidError.emit();
+        });
+    }
 
     setUserId(jwtAnchor: string) {
         localStorage.setItem('jwt', jwtAnchor);

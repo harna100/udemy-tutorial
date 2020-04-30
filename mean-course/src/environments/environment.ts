@@ -4,6 +4,9 @@
 
 const protocol = 'https://';
 const hostname = 'keytrader.xyz';
+
+// const protocol = 'http://';
+// const hostname = '192.168.4.223';
 const portNumber = ''; // portnumber needs to be :numb if used
 const url = protocol + hostname + portNumber;
 

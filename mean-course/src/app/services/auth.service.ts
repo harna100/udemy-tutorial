@@ -1,8 +1,9 @@
-import { Injectable, EventEmitter, Output } from '@angular/core';
+import { Injectable, EventEmitter, Output, Directive } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
+@Directive()
 @Injectable({providedIn: 'root'})
 export class AuthService {
     @Output() userIdSet = new EventEmitter<void>();

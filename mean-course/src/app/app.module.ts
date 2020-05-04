@@ -14,6 +14,7 @@ import { PostListComponent } from './posts/post-list/post-list.component';
 import { LoginComponent } from './login/login.component';
 import { PostHomeComponent } from './posts/post-home/post-home.component';
 import { AppRoutingModule } from './app-routing.module';
+import { PostComponent } from './posts/post/post.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { AppRoutingModule } from './app-routing.module';
     HeaderComponent,
     PostListComponent,
     LoginComponent,
-    PostHomeComponent
+    PostHomeComponent,
+    PostComponent
   ],
   imports: [
     AppRoutingModule,

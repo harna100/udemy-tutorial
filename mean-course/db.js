@@ -43,7 +43,7 @@ exports.getUser = function (user_id, successCb, errCb) {
         .query(sql, [user_id])
         .then(successCb)
         .catch(errCb);
-}
+};
 
 exports.addPost = function (postToInsert, successCb, errCb) {
     var sql = "INSERT INTO posts(title, content, user_post_id) values(:title,:content,:userId);";
@@ -128,7 +128,7 @@ exports.getAllPosts = function (successCb, errCb) {
         )
         .then(successCb)
         .catch(errCb);
-}
+};
 
 exports.deletePost = function (idToDelete, userId, successCb, errCb) {
     var sql = "DELETE FROM posts WHERE post_id = ? AND user_post_id = ?;";
@@ -139,4 +139,18 @@ exports.deletePost = function (idToDelete, userId, successCb, errCb) {
         )
         .then(successCb)
         .catch(errCb);
-}
+};
+
+exports.editPost = function (postObj, userId, successCb, errCb) {
+    var sql = "UPDATE posts set title=?, content=? WHERE post_id=? AND user_post_id=?;"
+    
+    // don't use the user id in post, could be edited by user.
+    // Instead use id in the decoded jwt
+    this.get()
+        .query(
+            sql,
+            [postObj.title, postObj.content, postObj.id, userId]
+        )
+        .then(successCb)
+        .catch(errCb);
+};

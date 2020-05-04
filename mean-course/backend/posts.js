@@ -106,4 +106,36 @@ router.delete('/action/delete', (req, res, next) => {
     });
 });
 
+router.put('/action/edit', (req, res, next) => {
+    // don't use the user id in post, could be edited by user.
+    // Instead use id in the decoded jwt
+    db.editPost(req.body.post, req.decoded.id, function(results) {
+        if (results.affectedRows == 1) {
+            res.status(200).json({
+                message: "Successfully edited",
+                results: results
+            });
+        }
+        else if (results.affectedRows == 0) {
+            res.status(403).json({
+                title: "Fail to edit",
+                message: "User id not allowed to edit post"
+            })
+        }
+        else if (results.affectedRows > 1) {
+            console.log('Edited ' + results.affectedRows +' rows: ' + JSON.stringify(req))
+            res.status(500).json({
+                title: "Edited more than 1 row",
+                message: "Edited more than one row somehow"
+            })
+        }
+    }, function(err) {
+        console.error(err);
+        res.status(500).json({
+            message: "Failed",
+            err:err
+        });
+    });
+});
+
 module.exports = router;

@@ -65,4 +65,18 @@ export class PostsService {
             this.postsUpdated.next([...this.posts]);
         });
     }
+
+    editPost(post: Post, successCb) {
+        const options = this.getAuthHeader();
+        console.log(post);
+        this.http.put(environment.getApiUrl('posts/action/edit'), {post}, options)
+        .subscribe(responseData => {
+            console.log(responseData);
+            const idxToUpdate: number = this.posts.findIndex((currPost) => currPost.id === post.id);
+            console.log('Updating: ' + idxToUpdate);
+            this.posts[idxToUpdate] = post;
+            this.postsUpdated.next([...this.posts]);
+            successCb();
+        });
+    }
 }

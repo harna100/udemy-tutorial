@@ -1,1 +1,37 @@
-<p>post works!</p>
+<mat-expansion-panel *ngIf="!this.isEditing">
+    <mat-expansion-panel-header>{{ this.post.title }}</mat-expansion-panel-header>
+    <p>{{ this.post.content }}</p>
+    <mat-action-row>
+        <div *ngIf="this.post.userId == this.userId && !this.isEditing">
+            <button mat-button color='accent' (click)="editPost()">Edit</button>
+            <button mat-button color='warn' (click)="deletePost()">Delete</button>
+        </div>
+    </mat-action-row>
+</mat-expansion-panel>
+<mat-card *ngIf="this.isEditing">
+    <form (submit)="doneEditing()" [formGroup]="formGroup">
+        <mat-form-field>
+            <input
+                matInput
+                type="text"
+                formControlName="title"
+                id="title"
+                required
+                placeholder="Post Title">
+            <mat-error *ngIf="title.errors?.required">Please enter a post title.</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <textarea
+                matInput
+                rows="3"
+                formControlName="content"
+                id="content"
+                required
+                placeholder="Post Content"></textarea>
+            <mat-error *ngIf="content.errors?.required">Please enter post content.</mat-error>
+        </mat-form-field>
+        <mat-action-row>
+            <button mat-button color="accent">Done</button>
+        </mat-action-row>
+    </form>
+</mat-card>
